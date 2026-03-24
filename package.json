@@ -1,0 +1,14 @@
+{
+  "name": "jibunjisinhp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev .",
+    "deploy": "wrangler pages deploy .",
+    "db:migrate": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote"
+  },
+  "devDependencies": {
+    "wrangler": "^4.6.0"
+  }
+}

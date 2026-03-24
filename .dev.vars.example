@@ -1,0 +1,5 @@
+ADMIN_EMAIL=asanojo1101@gmail.com
+ACCESS_AUD=replace-with-access-aud
+ACCESS_TEAM_DOMAIN=https://your-team.cloudflareaccess.com
+LOCAL_DEV_BYPASS_ACCESS=true
+MAX_UPLOAD_BYTES=8388608

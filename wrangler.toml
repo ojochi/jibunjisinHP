@@ -1,0 +1,21 @@
+name = "jibunjisinhp"
+compatibility_date = "2026-03-24"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "jibunjisin-me-db"
+database_id = "5df37c78-ec18-4170-a090-17af7ff38c10"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "SELFIES_BUCKET"
+bucket_name = "jibunjisin-me-images"
+preview_bucket_name = "jibunjisin-me-images-preview"
+
+[vars]
+ADMIN_EMAIL = "asanojo1101@gmail.com"
+ACCESS_AUD = "replace-with-access-aud"
+ACCESS_TEAM_DOMAIN = "https://your-team.cloudflareaccess.com"
+LOCAL_DEV_BYPASS_ACCESS = "true"
+MAX_UPLOAD_BYTES = "8388608"

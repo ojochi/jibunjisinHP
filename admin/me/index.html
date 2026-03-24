@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>me Admin</title>
+    <link rel="stylesheet" href="/assets/selfies.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="page-head">
+        <div>
+          <p class="eyebrow">Admin</p>
+          <h1>自撮り投稿の管理</h1>
+          <p class="lead">スマホから画像を投稿、編集、削除できます。</p>
+        </div>
+        <nav class="page-links">
+          <a href="/">Home</a>
+          <a href="/me">Public</a>
+          <a href="/admin/me/new">New Post</a>
+        </nav>
+      </header>
+
+      <section class="panel">
+        <p id="admin-message" class="message" hidden></p>
+        <div id="admin-list" class="admin-list"></div>
+        <p id="admin-empty" class="empty" hidden>投稿はまだありません。</p>
+      </section>
+    </main>
+
+    <script src="/assets/selfies-admin-list.js"></script>
+  </body>
+</html>

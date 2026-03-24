@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "include": [
+    "/admin/*",
+    "/api/*",
+    "/media/*"
+  ],
+  "exclude": []
+}
