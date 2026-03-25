@@ -1,4 +1,4 @@
-import { json, mapPost, serverError } from "../_lib/selfies.js";
+import { json, serverError } from "../_lib/selfies.js";
 
 export async function onRequestGet(context) {
   try {
@@ -6,13 +6,7 @@ export async function onRequestGet(context) {
       `SELECT
         p.id,
         p.created_at,
-        p.comment,
-        p.source_type,
-        p.source_post_id,
-        p.source_permalink,
-        p.updated_at,
         i.id AS image_id,
-        i.image_key,
         i.image_url
       FROM posts p
       LEFT JOIN post_images i
@@ -22,7 +16,20 @@ export async function onRequestGet(context) {
     ).all();
 
     return json({
-      items: results.map(mapPost)
+      items: results
+        .filter(function (row) {
+          return Boolean(row.image_url);
+        })
+        .map(function (row) {
+          return {
+            id: row.id,
+            createdAt: row.created_at,
+            image: {
+              id: row.image_id,
+              imageUrl: row.image_url
+            }
+          };
+        })
     });
   } catch (error) {
     console.error(error);

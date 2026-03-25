@@ -31,6 +31,14 @@ Cloudflare Pages で配信する個人HPです。
 - `/me`
 - `/api/me`
 - `/media/me/:key`
+- `/instagram-media/...` imported Instagram images served as static files
+
+`/api/me` returns the minimum fields needed for the public gallery:
+
+- `id`
+- `createdAt`
+- `image.id`
+- `image.imageUrl`
 
 ## Admin auth flow
 
@@ -92,6 +100,24 @@ Remote:
 - `cmd /c npm run db:migrate:remote`
 
 The initial migration has already been applied to the remote D1 database.
+
+## Instagram import
+
+Imported Instagram image posts are stored like this:
+
+- dates: D1 `posts.created_at`
+- images: static `instagram-media/...`
+- source marker: `source_type = instagram_import`
+
+Helper scripts:
+
+- `node scripts/import-instagram-posts.mjs`
+  - reads `posts_1.json` and `archived_posts.json`
+  - imports image posts only
+  - skips videos
+  - normalizes Instagram `.heic` exports that are actually JPEG data
+- `node scripts/apply-d1-sql-batches.mjs scripts/instagram-import.sql`
+  - applies the generated SQL to remote D1 in safe batches
 
 ## Verification
 
