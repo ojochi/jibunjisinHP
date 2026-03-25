@@ -162,6 +162,11 @@ textarea {
   margin-top: 24px;
 }
 
+.pagination-top {
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
 .pagination-item,
 .pagination-gap {
   min-width: 42px;

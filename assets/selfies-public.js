@@ -1,9 +1,10 @@
 (function () {
   var grid = document.getElementById("me-grid");
   var empty = document.getElementById("me-empty");
-  var pagination = document.getElementById("me-pagination");
+  var paginationTop = document.getElementById("me-pagination-top");
+  var paginationBottom = document.getElementById("me-pagination-bottom");
 
-  if (!grid || !empty || !pagination) {
+  if (!grid || !empty || !paginationTop || !paginationBottom) {
     return;
   }
 
@@ -47,37 +48,39 @@
         grid.appendChild(article);
       });
 
-      renderPagination(currentPage, totalPages);
+      renderPagination(paginationTop, currentPage, totalPages);
+      renderPagination(paginationBottom, currentPage, totalPages);
     })
     .catch(function (error) {
       empty.hidden = false;
       empty.textContent = error.message || "Failed to load posts.";
     });
 
-  function renderPagination(currentPage, totalPages) {
-    pagination.innerHTML = "";
+  function renderPagination(container, currentPage, totalPages) {
+    container.innerHTML = "";
 
     if (totalPages <= 1) {
-      pagination.hidden = true;
+      container.hidden = true;
       return;
     }
 
-    pagination.hidden = false;
+    container.hidden = false;
 
-    appendLink("‹", currentPage - 1, currentPage <= 1, false, "前のページ");
+    appendLink(container, "<", currentPage - 1, currentPage <= 1, false, "前のページ");
 
     var startPage = Math.max(1, currentPage - 2);
     var endPage = Math.min(totalPages, currentPage + 2);
 
     if (startPage > 1) {
-      appendLink("1", 1, false, currentPage === 1, "1ページ");
+      appendLink(container, "1", 1, false, currentPage === 1, "1ページ");
       if (startPage > 2) {
-        appendGap();
+        appendGap(container);
       }
     }
 
     for (var pageNumber = startPage; pageNumber <= endPage; pageNumber += 1) {
       appendLink(
+        container,
         String(pageNumber),
         pageNumber,
         false,
@@ -88,9 +91,10 @@
 
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
-        appendGap();
+        appendGap(container);
       }
       appendLink(
+        container,
         String(totalPages),
         totalPages,
         false,
@@ -99,15 +103,15 @@
       );
     }
 
-    appendLink("›", currentPage + 1, currentPage >= totalPages, false, "次のページ");
+    appendLink(container, ">", currentPage + 1, currentPage >= totalPages, false, "次のページ");
   }
 
-  function appendLink(label, page, disabled, current, ariaLabel) {
+  function appendLink(container, label, page, disabled, current, ariaLabel) {
     if (disabled || current) {
       var span = document.createElement("span");
       span.className = "pagination-item" + (current ? " current" : " disabled");
       span.textContent = label;
-      pagination.appendChild(span);
+      container.appendChild(span);
       return;
     }
 
@@ -116,13 +120,13 @@
     link.href = page === 1 ? "/me" : "/me?page=" + page;
     link.textContent = label;
     link.setAttribute("aria-label", ariaLabel || label);
-    pagination.appendChild(link);
+    container.appendChild(link);
   }
 
-  function appendGap() {
+  function appendGap(container) {
     var span = document.createElement("span");
     span.className = "pagination-gap";
     span.textContent = "...";
-    pagination.appendChild(span);
+    container.appendChild(span);
   }
 })();
