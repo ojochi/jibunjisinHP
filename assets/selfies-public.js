@@ -1,10 +1,11 @@
 (function () {
   var grid = document.getElementById("me-grid");
   var empty = document.getElementById("me-empty");
+  var count = document.getElementById("me-count");
   var paginationTop = document.getElementById("me-pagination-top");
   var paginationBottom = document.getElementById("me-pagination-bottom");
 
-  if (!grid || !empty || !paginationTop || !paginationBottom) {
+  if (!grid || !empty || !count || !paginationTop || !paginationBottom) {
     return;
   }
 
@@ -25,6 +26,10 @@
       var paging = data.pagination || {};
       var currentPage = Number(paging.page) || 1;
       var totalPages = Number(paging.totalPages) || 1;
+      var totalItems = Number(paging.totalItems) || 0;
+
+      count.hidden = false;
+      count.textContent = "総自撮り枚数 " + totalItems + "枚";
 
       if (items.length === 0) {
         empty.hidden = false;
