@@ -153,6 +153,41 @@ textarea {
   padding: 12px;
 }
 
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.pagination-item,
+.pagination-gap {
+  min-width: 42px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.pagination-item {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  text-decoration: none;
+}
+
+.pagination-item.current {
+  background: var(--accent);
+  border-color: transparent;
+  color: #1a120d;
+  font-weight: 700;
+}
+
+.pagination-item.disabled,
+.pagination-gap {
+  color: var(--muted);
+}
+
 .message {
   border-radius: 14px;
   background: rgba(214, 139, 87, 0.14);
