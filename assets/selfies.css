@@ -159,7 +159,7 @@ textarea {
   gap: 8px;
   justify-content: center;
   align-items: center;
-  margin-top: 18px;
+  margin-top: 24px;
 }
 
 .pagination-item,
@@ -172,8 +172,9 @@ textarea {
 
 .pagination-item {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.08);
   text-decoration: none;
+  font-weight: 700;
 }
 
 .pagination-item.current {
@@ -186,6 +187,10 @@ textarea {
 .pagination-item.disabled,
 .pagination-gap {
   color: var(--muted);
+}
+
+.pagination-item.disabled {
+  opacity: 0.5;
 }
 
 .message {

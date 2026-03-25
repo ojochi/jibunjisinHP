@@ -4,7 +4,7 @@ export async function onRequestGet(context) {
   try {
     const url = new URL(context.request.url);
     const pageParam = Number(url.searchParams.get("page") || "1");
-    const pageSize = 20;
+    const pageSize = 100;
     const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
 
     const countRow = await context.env.DB.prepare(
