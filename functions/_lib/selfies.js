@@ -6,50 +6,6 @@ const ALLOWED_MIME_TYPES = {
 
 const MAX_COMMENT_LENGTH = 140;
 
-function isLocalDev(request, env) {
-  if (env.LOCAL_DEV_BYPASS_ACCESS !== "true") {
-    return false;
-  }
-
-  const hostname = new URL(request.url).hostname;
-  return hostname === "127.0.0.1" || hostname === "localhost";
-}
-
-export function requireAdmin(request, env) {
-  if (isLocalDev(request, env)) {
-    return null;
-  }
-
-  const expectedEmail = (env.ADMIN_EMAIL || "").trim().toLowerCase();
-  const actualEmail = (request.headers.get("Cf-Access-Authenticated-User-Email") || "")
-    .trim()
-    .toLowerCase();
-
-  if (!expectedEmail) {
-    return adminAccessErrorResponse(
-      request,
-      "Admin access is not configured. Set ADMIN_EMAIL and Cloudflare Access.",
-      403
-    );
-  }
-
-  if (!actualEmail || actualEmail !== expectedEmail) {
-    return adminAccessErrorResponse(request, "Forbidden", 403);
-  }
-
-  return null;
-}
-
-export function validateAccessConfig(env) {
-  if (!env.ACCESS_TEAM_DOMAIN || !env.ACCESS_AUD) {
-    return {
-      error: "Cloudflare Access is not fully configured. Set ACCESS_TEAM_DOMAIN and ACCESS_AUD."
-    };
-  }
-
-  return null;
-}
-
 export function adminAccessErrorResponse(request, message, status = 403) {
   const pathname = new URL(request.url).pathname;
   if (pathname.startsWith("/api/")) {
@@ -63,14 +19,6 @@ export function adminAccessErrorResponse(request, message, status = 403) {
       "cache-control": "no-store"
     }
   });
-}
-
-export function accessConfigErrorResponse(request) {
-  return adminAccessErrorResponse(
-    request,
-    "Cloudflare Access is not fully configured. Set ACCESS_TEAM_DOMAIN and ACCESS_AUD.",
-    403
-  );
 }
 
 export function json(data, status = 200) {

@@ -1,45 +1,20 @@
-import {
-  accessConfigErrorResponse,
-  adminAccessErrorResponse,
-  requireAdmin,
-  validateAccessConfig
-} from "../../_lib/selfies.js";
-import { validateAccessJwt } from "../../_lib/access.js";
+import { getSessionConfig, isAuthenticated, unauthorizedJson } from "../../_lib/auth.js";
 
-async function bypassLocalDev(context) {
-  if (context.env.LOCAL_DEV_BYPASS_ACCESS === "true") {
-    const hostname = new URL(context.request.url).hostname;
-    if (hostname === "127.0.0.1" || hostname === "localhost") {
-      return context.next();
-    }
+export async function onRequest(context) {
+  const pathname = new URL(context.request.url).pathname;
+  if (pathname === "/api/admin/login" || pathname === "/api/admin/logout") {
+    return context.next();
   }
 
-  const accessConfigError = validateAccessConfig(context.env);
-  if (accessConfigError) {
-    return accessConfigErrorResponse(context.request);
+  const configError = getSessionConfig(context.env);
+  if (configError) {
+    return unauthorizedJson(configError.error);
   }
 
-  return null;
-}
-
-async function validateJwtAndRestrictAdmin(context) {
-  try {
-    await validateAccessJwt(context.request, context.env);
-  } catch (error) {
-    return adminAccessErrorResponse(context.request, error.message || "Forbidden", 403);
-  }
-
-  const denied = requireAdmin(context.request, context.env);
-  if (denied) {
-    return denied;
+  const authenticated = await isAuthenticated(context.request, context.env);
+  if (!authenticated) {
+    return unauthorizedJson("Authentication required.");
   }
 
   return context.next();
 }
-
-export const onRequest = [
-  async function (context) {
-    return bypassLocalDev(context);
-  },
-  validateJwtAndRestrictAdmin
-];
