@@ -196,7 +196,7 @@
       .then(function (data) {
         var item = data.item;
         currentPost = item;
-        var createdMessage = "Post created. Use Xに共有 to share it.";
+        var createdMessage = "Post created. Use the X share button to share it.";
         showMessage(mode === "edit" ? "Post updated." : createdMessage, false);
 
         if (mode === "new" && item && item.id) {
@@ -253,7 +253,7 @@
       }
 
       shareButton.disabled = true;
-      shareButton.textContent = "準備中...";
+      shareButton.textContent = "\u6e96\u5099\u4e2d...";
 
       try {
         var response = await fetch(currentPost.image.imageUrl);
@@ -285,7 +285,7 @@
         showMessage(error.message || "Sharing failed.", true);
       } finally {
         shareButton.disabled = false;
-        shareButton.textContent = "Xに共有";
+        shareButton.textContent = "X\u306b\u5171\u6709";
       }
     });
   }
