@@ -50,7 +50,7 @@ export function onRequestGet(context) {
 
           <div class="form-actions">
             <button type="submit" class="primary">Save</button>
-            <button type="button" id="x-post-button">Post to X</button>
+            <button type="button" id="share-button">Xに共有</button>
             <button type="button" id="delete-button" class="danger">Delete</button>
           </div>
         </form>

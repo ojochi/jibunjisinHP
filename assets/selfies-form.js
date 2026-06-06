@@ -13,29 +13,13 @@
   var imageInput = form.elements.image;
   var commentInput = form.elements.comment;
   var deleteButton = document.getElementById("delete-button");
-  var xPostButton = document.getElementById("x-post-button");
+  var shareButton = document.getElementById("share-button");
+  var currentPost = null;
 
   function showMessage(text, isError) {
     message.hidden = false;
     message.textContent = text;
     message.className = isError ? "message error" : "message";
-  }
-
-  function buildCreatedMessage(data) {
-    var xPost = data && data.xPost;
-    if (!xPost || xPost.status === "skipped") {
-      return "Post created. X posting is not configured.";
-    }
-
-    if (xPost.status === "posted") {
-      return "Post created and posted to X.";
-    }
-
-    if (xPost.status === "failed") {
-      return "Post created, but X posting failed: " + (xPost.error || "Unknown error.");
-    }
-
-    return "Post created.";
   }
 
   function showStoredMessage() {
@@ -165,6 +149,7 @@
       })
       .then(function (data) {
         var item = data.item;
+        currentPost = item;
         commentInput.value = item.comment || "";
         updateCommentCount();
 
@@ -210,8 +195,9 @@
       })
       .then(function (data) {
         var item = data.item;
-        var createdMessage = buildCreatedMessage(data);
-        showMessage(mode === "edit" ? "Post updated." : createdMessage, data.xPost && data.xPost.status === "failed");
+        currentPost = item;
+        var createdMessage = "Post created. Use Xに共有 to share it.";
+        showMessage(mode === "edit" ? "Post updated." : createdMessage, false);
 
         if (mode === "new" && item && item.id) {
           if (window.sessionStorage) {
@@ -219,7 +205,7 @@
               "selfie-form-message",
               JSON.stringify({
                 text: createdMessage,
-                isError: data.xPost && data.xPost.status === "failed"
+                isError: false
               })
             );
           }
@@ -254,37 +240,53 @@
     });
   }
 
-  if (xPostButton && postId) {
-    xPostButton.addEventListener("click", function () {
-      var confirmed = window.confirm("Post this image and comment to X?");
-      if (!confirmed) {
+  if (shareButton && postId) {
+    shareButton.addEventListener("click", async function () {
+      if (!navigator.share) {
+        showMessage("This browser does not support image sharing. Please use Safari or Chrome on your smartphone.", true);
         return;
       }
 
-      xPostButton.disabled = true;
-      xPostButton.textContent = "Posting...";
+      if (!currentPost || !currentPost.image || !currentPost.image.imageUrl) {
+        showMessage("The image is not ready yet.", true);
+        return;
+      }
 
-      fetch("/api/admin/me/" + postId + "/x", { method: "POST" })
-        .then(function (response) {
-          return response.json().then(function (data) {
-            if (!response.ok) {
-              throw new Error(data.error || "X posting failed.");
-            }
+      shareButton.disabled = true;
+      shareButton.textContent = "準備中...";
 
-            return data;
-          });
-        })
-        .then(function (data) {
-          var url = data.xPost && data.xPost.url;
-          showMessage(url ? "Posted to X: " + url : "Posted to X.", false);
-        })
-        .catch(function (error) {
-          showMessage(error.message || "X posting failed.", true);
-        })
-        .finally(function () {
-          xPostButton.disabled = false;
-          xPostButton.textContent = "Post to X";
+      try {
+        var response = await fetch(currentPost.image.imageUrl);
+        if (!response.ok) {
+          throw new Error("Failed to load the image.");
+        }
+
+        var blob = await response.blob();
+        var extension = blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : "jpg";
+        var file = new File([blob], "selfie." + extension, {
+          type: blob.type || "image/jpeg"
         });
+        var shareData = {
+          text: currentPost.comment || "",
+          url: new URL("/me", window.location.origin).toString(),
+          files: [file]
+        };
+
+        if (navigator.canShare && !navigator.canShare({ files: shareData.files })) {
+          throw new Error("This browser cannot share image files.");
+        }
+
+        await navigator.share(shareData);
+      } catch (error) {
+        if (error && error.name === "AbortError") {
+          return;
+        }
+
+        showMessage(error.message || "Sharing failed.", true);
+      } finally {
+        shareButton.disabled = false;
+        shareButton.textContent = "Xに共有";
+      }
     });
   }
 
