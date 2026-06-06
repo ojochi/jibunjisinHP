@@ -67,6 +67,22 @@ Secrets:
 
 - `ADMIN_PASSWORD`
 - `SESSION_SECRET`
+- `X_API_KEY`
+- `X_API_SECRET`
+- `X_ACCESS_TOKEN`
+- `X_ACCESS_TOKEN_SECRET`
+
+Optional variables:
+
+- `PUBLIC_SITE_URL`
+- `X_USERNAME`
+
+If all X secrets are configured, new manual `/admin/me/new` posts are also
+posted to X with the uploaded image. If any X secret is missing, the site post is
+created normally and X posting is skipped.
+
+Existing posts can be sent manually from their edit page with the `Post to X`
+button.
 
 ## D1 and R2
 

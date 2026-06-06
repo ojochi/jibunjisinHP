@@ -8,6 +8,7 @@ import {
   saveImageToBucket,
   serverError
 } from "../../../_lib/selfies.js";
+import { publishSelfieToX } from "../../../_lib/x.js";
 
 export async function onRequestGet(context) {
   try {
@@ -81,7 +82,18 @@ export async function onRequestPost(context) {
       .run();
 
     const post = await getPostById(context.env.DB, postId);
-    return json({ item: post }, 201);
+    let xPost;
+    try {
+      xPost = await publishSelfieToX(context.env, post, parsed.value.image.file);
+    } catch (error) {
+      console.error(error);
+      xPost = {
+        status: "failed",
+        error: error.message || "X posting failed."
+      };
+    }
+
+    return json({ item: post, xPost }, 201);
   } catch (error) {
     console.error(error);
     return serverError();

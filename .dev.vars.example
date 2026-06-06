@@ -1,3 +1,9 @@
 MAX_UPLOAD_BYTES=8388608
 ADMIN_PASSWORD=replace-with-admin-password
 SESSION_SECRET=replace-with-long-random-secret
+PUBLIC_SITE_URL=https://example.com
+X_USERNAME=replace-with-x-username
+X_API_KEY=replace-with-x-api-key
+X_API_SECRET=replace-with-x-api-secret
+X_ACCESS_TOKEN=replace-with-x-access-token
+X_ACCESS_TOKEN_SECRET=replace-with-x-access-token-secret

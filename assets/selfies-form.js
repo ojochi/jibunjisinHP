@@ -13,11 +13,49 @@
   var imageInput = form.elements.image;
   var commentInput = form.elements.comment;
   var deleteButton = document.getElementById("delete-button");
+  var xPostButton = document.getElementById("x-post-button");
 
   function showMessage(text, isError) {
     message.hidden = false;
     message.textContent = text;
     message.className = isError ? "message error" : "message";
+  }
+
+  function buildCreatedMessage(data) {
+    var xPost = data && data.xPost;
+    if (!xPost || xPost.status === "skipped") {
+      return "Post created. X posting is not configured.";
+    }
+
+    if (xPost.status === "posted") {
+      return "Post created and posted to X.";
+    }
+
+    if (xPost.status === "failed") {
+      return "Post created, but X posting failed: " + (xPost.error || "Unknown error.");
+    }
+
+    return "Post created.";
+  }
+
+  function showStoredMessage() {
+    if (!window.sessionStorage) {
+      return;
+    }
+
+    var stored = window.sessionStorage.getItem("selfie-form-message");
+    if (!stored) {
+      return;
+    }
+
+    window.sessionStorage.removeItem("selfie-form-message");
+
+    try {
+      var parsed = JSON.parse(stored);
+      showMessage(parsed.text || "", parsed.isError);
+    } catch (error) {
+      showMessage(stored, false);
+    }
   }
 
   function setPreview(src, alt) {
@@ -172,9 +210,19 @@
       })
       .then(function (data) {
         var item = data.item;
-        showMessage(mode === "edit" ? "Post updated." : "Post created.", false);
+        var createdMessage = buildCreatedMessage(data);
+        showMessage(mode === "edit" ? "Post updated." : createdMessage, data.xPost && data.xPost.status === "failed");
 
         if (mode === "new" && item && item.id) {
+          if (window.sessionStorage) {
+            window.sessionStorage.setItem(
+              "selfie-form-message",
+              JSON.stringify({
+                text: createdMessage,
+                isError: data.xPost && data.xPost.status === "failed"
+              })
+            );
+          }
           window.location.href = "/admin/me/" + item.id + "/edit";
         }
       })
@@ -206,5 +254,39 @@
     });
   }
 
-  loadExistingPost();
+  if (xPostButton && postId) {
+    xPostButton.addEventListener("click", function () {
+      var confirmed = window.confirm("Post this image and comment to X?");
+      if (!confirmed) {
+        return;
+      }
+
+      xPostButton.disabled = true;
+      xPostButton.textContent = "Posting...";
+
+      fetch("/api/admin/me/" + postId + "/x", { method: "POST" })
+        .then(function (response) {
+          return response.json().then(function (data) {
+            if (!response.ok) {
+              throw new Error(data.error || "X posting failed.");
+            }
+
+            return data;
+          });
+        })
+        .then(function (data) {
+          var url = data.xPost && data.xPost.url;
+          showMessage(url ? "Posted to X: " + url : "Posted to X.", false);
+        })
+        .catch(function (error) {
+          showMessage(error.message || "X posting failed.", true);
+        })
+        .finally(function () {
+          xPostButton.disabled = false;
+          xPostButton.textContent = "Post to X";
+        });
+    });
+  }
+
+  loadExistingPost().then(showStoredMessage);
 })();
