@@ -268,7 +268,7 @@
         });
         var shareData = {
           text: currentPost.comment || "",
-          url: new URL("/me", window.location.origin).toString(),
+          url: new URL("/", window.location.origin).toString(),
           files: [file]
         };
 

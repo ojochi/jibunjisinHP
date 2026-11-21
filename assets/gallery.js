@@ -11,6 +11,17 @@ const grid = album.querySelector('.grid');
 const count = album.querySelector('small');
 const modal = document.querySelector('dialog');
 modal.onclick = event => { if (event.target === modal) modal.close(); };
+function displayDate(caption, value) {
+  const date = new Date(value);
+  const valid = Boolean(value) && Number.isFinite(date.getTime());
+  caption.hidden = !valid;
+  caption.textContent = valid ? '投稿日　' + date.toLocaleDateString('ja-JP', {timeZone:'Asia/Tokyo'}) : '';
+}
+function openPhoto(item) {
+  modal.querySelector('img').src = item.image.imageUrl;
+  displayDate(modal.querySelector('small'), item.createdAt);
+  modal.showModal();
+}
 async function fetchPage(page) {
   const response = await fetch('/api/me?page=' + page);
   if (!response.ok) throw Error('写真の読み込みに失敗しました。');
@@ -31,10 +42,7 @@ async function showPage(page, scroll = false) {
       image.src = item.image.imageUrl;
       image.alt = '自撮りを拡大';
       button.append(image);
-      button.onclick = () => {
-        modal.querySelector('img').src = image.src;
-        modal.showModal();
-      };
+      button.onclick = () => openPhoto(item);
       grid.append(button);
     }
     for (const nav of album.querySelectorAll('nav')) {
@@ -64,8 +72,8 @@ async function start() {
   const item = data.items[index % paging.pageSize];
   if (!item) return;
   document.querySelector('#hero').src = item.image.imageUrl;
-  const date = new Date(item.createdAt);
-  if (item.createdAt && Number.isFinite(date.getTime())) document.querySelector('figcaption').textContent = '投稿日　' + date.toLocaleDateString('ja-JP', {timeZone:'Asia/Tokyo'});
+  displayDate(document.querySelector('figcaption'), item.createdAt);
+  document.querySelector('#open-hero').onclick = () => openPhoto(item);
   document.querySelector('figure').hidden = false;
 }
 start().catch(console.error);
