@@ -1,0 +1,93 @@
+const news = document.querySelector('#news');
+for (const item of window.newsItems || []) {
+  const date = document.createElement('small');
+  const body = document.createElement('p');
+  date.textContent = item.date;
+  body.textContent = item.text;
+  news.append(date, body);
+}
+const album = document.querySelector('#album');
+const grid = album.querySelector('.grid');
+const count = album.querySelector('small');
+const modal = document.querySelector('dialog');
+modal.onclick = event => { if (event.target === modal) modal.close(); };
+async function fetchPage(page) {
+  const response = await fetch('/api/me?page=' + page);
+  if (!response.ok) throw Error('写真の読み込みに失敗しました。');
+  return response.json();
+}
+let latest = 0;
+async function showPage(page, scroll = false) {
+  const request = ++latest;
+  try {
+    const {items, pagination} = await fetchPage(page);
+    if (latest !== request) return;
+    count.textContent = '全' + pagination.totalItems + '枚';
+    grid.replaceChildren();
+    for (const item of items) {
+      const button = document.createElement('button');
+      const image = new Image();
+      image.loading = 'lazy';
+      image.src = item.image.imageUrl;
+      image.alt = '自撮りを拡大';
+      button.append(image);
+      button.onclick = () => {
+        modal.querySelector('img').src = image.src;
+        modal.showModal();
+      };
+      grid.append(button);
+    }
+    for (const nav of album.querySelectorAll('nav')) {
+      nav.replaceChildren();
+      for (let i = 1; i <= pagination.totalPages; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.onclick = () => showPage(i, true);
+        if (i === pagination.page) button.setAttribute('aria-current', 'page');
+        nav.append(button);
+      }
+      const active = nav.querySelector('[aria-current]');
+      if (active) nav.scrollLeft += active.getBoundingClientRect().left - nav.getBoundingClientRect().left - nav.clientWidth / 2 + active.offsetWidth / 2;
+    }
+    if (scroll) album.scrollIntoView();
+    return pagination;
+  } catch {
+    if (request === latest) count.textContent = '写真を読み込めませんでした。ページを再読み込みしてください。';
+  }
+}
+async function start() {
+  const page = Number(new URL(location.href).searchParams.get('page')) || 1;
+  const paging = await showPage(page);
+  if (!paging?.totalItems) return;
+  const index = Math.floor(Math.random() * paging.totalItems);
+  const data = await fetchPage(Math.floor(index / paging.pageSize) + 1);
+  const item = data.items[index % paging.pageSize];
+  if (!item) return;
+  document.querySelector('#hero').src = item.image.imageUrl;
+  const date = new Date(item.createdAt);
+  if (item.createdAt && Number.isFinite(date.getTime())) document.querySelector('figcaption').textContent = '投稿日　' + date.toLocaleDateString('ja-JP', {timeZone:'Asia/Tokyo'});
+  document.querySelector('figure').hidden = false;
+}
+start().catch(console.error);
+const form = document.querySelector('form');
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  const button = form.querySelector('button');
+  if (button.disabled) return;
+  button.disabled = true;
+  const status = form.querySelector('[role=status]');
+  status.textContent = '送信中…';
+  try {
+    const response = await fetch('/api/contact', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:form.querySelector('input').value, message:form.querySelector('textarea').value})
+    });
+    if (response.status !== 204) throw Error();
+    form.reset();
+    status.textContent = 'お問い合わせを送信しました。';
+  } catch {
+    status.textContent = '送信を確認できませんでした。時間をおいてお試しください。';
+  } finally {
+    button.disabled = false;
+  }
+});
