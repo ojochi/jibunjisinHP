@@ -268,7 +268,7 @@
         });
         var shareData = {
           text: currentPost.comment || "",
-          url: new URL("/", window.location.origin).toString(),
+          url: "https://jibunjisin.net/",
           files: [file]
         };
 
