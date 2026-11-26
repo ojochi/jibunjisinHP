@@ -10,28 +10,26 @@ export function onRequestGet(context) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Edit me Post</title>
-    <link rel="stylesheet" href="/assets/selfies.css">
+    <link rel="stylesheet" href="/assets/admin-gallery.css?v=1">
   </head>
   <body>
     <main class="shell">
       <header class="page-head">
         <div>
-          <p class="eyebrow">Admin</p>
-          <h1>自撮り投稿を編集</h1>
+          <h1>写真を編集</h1>
         </div>
         <nav class="page-links">
-          <a href="/">Home</a>
-          <a href="/me">Public</a>
-          <a href="/admin/me">Admin List</a>
+          <a href="/">公開一覧を見る</a>
+          <a href="/admin/me">写真の管理へ</a>
         </nav>
       </header>
 
       <section class="panel">
-        <form id="selfie-form" class="selfie-form" novalidate>
+        <form id="selfie-form" class="selfie-form">
           <input type="hidden" name="mode" value="edit">
 
           <label class="field">
-            <span>Image</span>
+            <span>写真</span>
             <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
             <small>画像を選ぶと差し替えます。未選択ならそのままです。</small>
           </label>
@@ -40,18 +38,17 @@ export function onRequestGet(context) {
             <img id="image-preview" class="image-preview" alt="" hidden>
           </div>
 
-          <label class="field">
-            <span>Comment</span>
-            <textarea name="comment" rows="4" maxlength="140" required></textarea>
+          <details id="note"><summary>ひとこと（任意）</summary>
+            <textarea aria-label="ひとこと" name="comment" rows="3" maxlength="140"></textarea>
             <small><span id="comment-count">0</span>/140</small>
-          </label>
+          </details>
 
           <p id="form-message" class="message" hidden></p>
 
           <div class="form-actions">
-            <button type="submit" class="primary">Save</button>
+            <button type="submit" class="primary">変更を保存</button>
             <button type="button" id="share-button">X&#12395;&#20849;&#26377;</button>
-            <button type="button" id="delete-button" class="danger">Delete</button>
+            <button type="button" id="delete-button" class="danger">削除</button>
           </div>
         </form>
       </section>
@@ -61,7 +58,7 @@ export function onRequestGet(context) {
       window.__SELFIE_FORM_MODE = "edit";
       window.__SELFIE_POST_ID = "${postId}";
     </script>
-    <script src="/assets/selfies-form.js"></script>
+    <script src="/assets/selfies-form.js?v=3"></script>
   </body>
 </html>`,
     {

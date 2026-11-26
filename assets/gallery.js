@@ -57,7 +57,14 @@ async function showPage(page, scroll = false) {
       const active = nav.querySelector('[aria-current]');
       if (active) nav.scrollLeft += active.getBoundingClientRect().left - nav.getBoundingClientRect().left - nav.clientWidth / 2 + active.offsetWidth / 2;
     }
-    if (scroll) album.scrollIntoView();
+    if (scroll) {
+      const url = new URL(location.href);
+      if (Number(url.searchParams.get('page') || 1) !== pagination.page) {
+        url.searchParams.set('page', pagination.page);
+        history.pushState(null, '', url);
+      }
+      album.scrollIntoView();
+    }
     return pagination;
   } catch {
     if (request === latest) count.textContent = '写真を読み込めませんでした。ページを再読み込みしてください。';
@@ -76,6 +83,7 @@ async function start() {
   document.querySelector('#open-hero').onclick = () => openPhoto(item);
   document.querySelector('figure').hidden = false;
 }
+window.addEventListener('popstate', () => showPage(Number(new URL(location.href).searchParams.get('page')) || 1));
 start().catch(console.error);
 const form = document.querySelector('form');
 form.addEventListener('submit', async event => {

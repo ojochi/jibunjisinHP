@@ -151,6 +151,7 @@
         var item = data.item;
         currentPost = item;
         commentInput.value = item.comment || "";
+        document.querySelector("#note").open = Boolean(item.comment);
         updateCommentCount();
 
         if (item.image && item.image.imageUrl) {
@@ -196,8 +197,8 @@
       .then(function (data) {
         var item = data.item;
         currentPost = item;
-        var createdMessage = "Post created. Use the X share button to share it.";
-        showMessage(mode === "edit" ? "Post updated." : createdMessage, false);
+        var createdMessage = "写真を公開しました。";
+        showMessage(mode === "edit" ? "変更を保存しました。" : createdMessage, false);
 
         if (mode === "new" && item && item.id) {
           if (window.sessionStorage) {
@@ -219,7 +220,7 @@
 
   if (deleteButton && postId) {
     deleteButton.addEventListener("click", function () {
-      var confirmed = window.confirm("Delete this post?");
+      var confirmed = window.confirm("この写真を削除しますか？");
       if (!confirmed) {
         return;
       }

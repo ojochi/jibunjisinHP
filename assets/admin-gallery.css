@@ -1,0 +1,15 @@
+@import url("/assets/gallery.css?v=2");
+.shell { padding:24px 0 64px; max-width:700px; }
+.page-head { width:100%; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+h1 { font-size:clamp(24px,5vw,34px); margin:0; }
+.page-links,.form-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+a { color:var(--accent); }
+.primary,.page-links a[href="/admin/me/new"] { border-radius:24px; background:var(--accent); color:var(--bg); padding:9px 17px; text-decoration:none; }
+.admin-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px 8px; }
+.admin-list a { text-decoration:none; font-size:13px; }
+.admin-list img { display:block; width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; margin-bottom:4px; }
+.image-preview { max-width:100%; max-height:46vh; margin:12px auto; display:block; object-fit:contain; }
+[hidden] { display:none !important; }
+details { margin:20px 0; } summary { cursor:pointer; }
+input[type=file]::file-selector-button { padding:8px 14px; border:0; border-radius:20px; background:var(--accent); color:var(--bg); }
+.danger,.error { color:#ffb4ab; }

@@ -50,10 +50,6 @@ export function nowIso() {
 export function validateCommonFields(fields) {
   const comment = typeof fields.comment === "string" ? fields.comment.trim() : "";
 
-  if (!comment) {
-    return { error: "comment is required." };
-  }
-
   if (comment.length > MAX_COMMENT_LENGTH) {
     return { error: "comment must be 140 characters or fewer." };
   }

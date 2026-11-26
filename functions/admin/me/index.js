@@ -7,33 +7,30 @@ function renderLoginPage() {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Login</title>
-    <link rel="stylesheet" href="/assets/selfies.css">
+    <link rel="stylesheet" href="/assets/admin-gallery.css?v=1">
   </head>
   <body>
     <main class="shell">
       <header class="page-head">
         <div>
-          <p class="eyebrow">Admin</p>
           <h1>ログイン</h1>
-          <p class="lead">管理用パスワードを入力してください。</p>
         </div>
         <nav class="page-links">
-          <a href="/">Home</a>
-          <a href="/me">Public</a>
+          <a href="/">公開一覧を見る</a>
         </nav>
       </header>
 
       <section class="panel">
-        <form id="admin-login-form" class="selfie-form" novalidate>
+        <form id="admin-login-form" class="selfie-form">
           <label class="field">
-            <span>Password</span>
+            <span>パスワード</span>
             <input type="password" name="password" autocomplete="current-password" required>
           </label>
 
           <p id="login-message" class="message" hidden></p>
 
           <div class="form-actions">
-            <button type="submit" class="primary">Login</button>
+            <button type="submit" class="primary">ログイン</button>
           </div>
         </form>
       </section>
@@ -51,32 +48,31 @@ function renderAdminPage() {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>me Admin</title>
-    <link rel="stylesheet" href="/assets/selfies.css">
+    <link rel="stylesheet" href="/assets/admin-gallery.css?v=1">
   </head>
   <body>
     <main class="shell">
       <header class="page-head">
         <div>
-          <p class="eyebrow">Admin</p>
-          <h1>自撮り投稿の管理</h1>
-          <p class="lead">スマホから画像を投稿、編集、削除できます。</p>
+          <h1>写真の管理</h1>
         </div>
         <nav class="page-links">
-          <a href="/">Home</a>
-          <a href="/me">Public</a>
-          <a href="/admin/me/new">New Post</a>
-          <button type="button" id="logout-button" class="link-button">Logout</button>
+          <a href="/">公開一覧を見る</a>
+          <a href="/admin/me/new">写真を投稿</a>
+          <button type="button" id="logout-button" class="link-button">ログアウト</button>
         </nav>
       </header>
 
       <section class="panel">
         <p id="admin-message" class="message" hidden></p>
+        <nav class="pages" aria-label="上部ページ選択"></nav>
         <div id="admin-list" class="admin-list"></div>
+        <nav class="pages" aria-label="下部ページ選択"></nav>
         <p id="admin-empty" class="empty" hidden>投稿はまだありません。</p>
       </section>
     </main>
 
-    <script src="/assets/selfies-admin-list.js"></script>
+    <script src="/assets/selfies-admin-list.js?v=3"></script>
     <script src="/assets/admin-logout.js"></script>
   </body>
 </html>`;
